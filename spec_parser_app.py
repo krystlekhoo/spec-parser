@@ -8,7 +8,13 @@ import openai
 st.set_page_config(layout="wide")
 st.title("Hybrid NLP + GPT Mechanical Insulation Spec Parser")
 
-nlp = spacy.load("en_core_web_sm")
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    with st.spinner("Downloading spaCy model..."):
+        from spacy.cli import download
+        download("en_core_web_sm")
+        nlp = spacy.load("en_core_web_sm")
 
 use_gpt = st.toggle("Use GPT for fallback extraction", value=False)
 openai_api_key = st.text_input("Enter OpenAI API Key (only if GPT is toggled on)", type="password") if use_gpt else None
